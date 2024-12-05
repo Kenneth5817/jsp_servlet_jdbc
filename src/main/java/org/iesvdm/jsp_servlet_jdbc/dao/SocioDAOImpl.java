@@ -37,6 +37,7 @@ public class SocioDAOImpl extends AbstractDAOImpl implements SocioDAO {
 
             rsGenKeys = ps.getGeneratedKeys();
             if (rsGenKeys.next())
+                //Se lee la columna
                 socio.setSocioId(rsGenKeys.getInt(1));
 
         } catch (SQLException | ClassNotFoundException  e) {
@@ -131,6 +132,7 @@ public class SocioDAOImpl extends AbstractDAOImpl implements SocioDAO {
         try {
             conn = connectDB();
 
+            //el id es autoincremental por eso solo se setean los demas parámetros
             ps = conn.prepareStatement("UPDATE socio SET nombre = ?, estatura = ?, edad = ?, localidad = ?  WHERE socioID = ?");
             int idx = 1;
             ps.setString(idx++, socio.getNombre());
@@ -141,6 +143,7 @@ public class SocioDAOImpl extends AbstractDAOImpl implements SocioDAO {
             ps.setInt(idx++, socio.getSocioId());
 
             int rows = ps.executeUpdate();
+
 
             if (rows == 0)
                 System.out.println("Update de socio con 0 registros actualizados.");
@@ -163,6 +166,7 @@ public class SocioDAOImpl extends AbstractDAOImpl implements SocioDAO {
         try {
             conn = connectDB();
 
+            //Preparamos el exception
             ps = conn.prepareStatement("DELETE FROM socio WHERE socioID = ?");
             int idx = 1;
             ps.setInt(idx, id);
