@@ -19,8 +19,29 @@ public class EditarSociosServlet extends HttpServlet {
     //MÉTODO PARA RUTAS GET /GrabarSociosServlet
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/formularioSocioB.jsp");
-        dispatcher.forward(request, response);
+
+
+        //VAlidacion para ver si es un numero
+        String codigoStr=request.getParameter("codigo");
+        Integer codigo=null;
+        boolean valida=true;
+        try{
+            codigo=Integer.parseInt(codigoStr);
+        }catch(NumberFormatException e){
+            e.printStackTrace();
+        }
+        RequestDispatcher dispatcher=null;
+        if(valida){
+            var socio=socioDao.find(codigo);
+            if(socio.isPresent()){
+                request.setAttribute("socio",socio);
+                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/formularioSocioB.jsp");
+                dispatcher.forward(request, response);
+            }
+            }else{
+                //LO mandamod a listar socios o sino que develva 1
+                response.sendRedirect("ListarSociosServlet?err-cod=!1");
+            }
 
     }
 
@@ -41,6 +62,7 @@ public class EditarSociosServlet extends HttpServlet {
 
         if(codigo!=null) {
             List<Socio> listado = this.socioDao.getAll();
+            
             request.setAttribute("listado", listado);
 
             dispatcher = request.getRequestDispatcher("/WEB-INF/jsp_servlet_editar.jsp");

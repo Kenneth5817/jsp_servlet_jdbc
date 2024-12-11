@@ -1,3 +1,4 @@
+<%@ page import="org.iesvdm.jsp_servlet_jdbc.model.Socio" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -12,19 +13,24 @@
     <div class="col-12 h2">Introduzca los datos del nuevo socio</div>
   </div>
 </div>
+
+<%Socio socio= (Socio) request.getAttribute("codigo");%>
 <div class="container bg-light">
   <form method="post" action="GrabarSociosServlet">
+
+    <!--Al añadir esta linea no me va-->
+    <!-- <input type="hidden" name="codigo" value="?"--> <%//socio.getSocioId();%>
     <div class="row body mt-2">
       <div class="col-md-6 align-self-center">Nombre</div>
       <div class="col-md-6 align-self-center"><input type="text" name="nombre"/></div>
     </div>
     <div class="row body mt-2">
       <div class="col-md-6 align-self-center">Estatura</div>
-      <div class="col-md-6 align-self-center"><input type="text" name="estatura"/></div>
+      <div class="col-md-6 align-self-center"><input type="number" name="estatura"/></div>
     </div>
     <div class="row body mt-2">
       <div class="col-md-6 align-self-center">Edad</div>
-      <div class="col-md-6 align-self-center"><input type="text" name="edad"/></div>
+      <div class="col-md-6 align-self-center"><input type="number" name="edad"/></div>
     </div>
     <div class="row body mt-2">
       <div class="col-md-6 align-self-center">Localidad</div>

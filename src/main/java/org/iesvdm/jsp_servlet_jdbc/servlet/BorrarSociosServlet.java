@@ -18,7 +18,7 @@ public class BorrarSociosServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RequestDispatcher dispatcher = null;
-        //Encxontramos en lsitadoSociosB
+        //Encontramos en listadoSociosB
         String codigoStr = request.getParameter("codigo");
 
         //Validamos el parametro
