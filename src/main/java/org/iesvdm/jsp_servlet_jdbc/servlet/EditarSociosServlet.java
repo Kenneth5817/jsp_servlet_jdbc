@@ -67,11 +67,9 @@ public class EditarSociosServlet extends HttpServlet {
 
             dispatcher = request.getRequestDispatcher("/WEB-INF/jsp_servlet_editar.jsp");
             dispatcher.forward(request, response);
-        }else{
+        }else {
             //Mostramos el error
             System.out.println("Parámetro no válido");
         }
-
-
     }
 }

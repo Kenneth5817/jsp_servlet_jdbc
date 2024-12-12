@@ -183,4 +183,38 @@ public class SocioDAOImpl extends AbstractDAOImpl implements SocioDAO {
         }
 
     }
+
+    //------REVISAR EL DAO IMPLEMENTACIÓN------ Para que borre correctamente
+    // Método para borrar un socio
+    public boolean borrarSocio(int codigo) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        boolean exito = false;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/baloncesto", "root", "user");
+
+                String sql = "DELETE FROM socio WHERE socioID = ?";
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, codigo);
+
+                int filasAfectadas = ps.executeUpdate();
+                if (filasAfectadas > 0) {
+                    exito = true;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (ps != null) ps.close();
+                    if (conn != null) conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return exito;
+        }
 }
