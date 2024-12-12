@@ -6,70 +6,44 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.iesvdm.jsp_servlet_jdbc.dao.SocioDAO;
 import org.iesvdm.jsp_servlet_jdbc.dao.SocioDAOImpl;
 import org.iesvdm.jsp_servlet_jdbc.model.Socio;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
-@WebServlet(name="EditarSociosServlet", value="/EditarSociosServlet")
+@WebServlet("/EditarSociosServlet")
 public class EditarSociosServlet extends HttpServlet {
-    private SocioDAOImpl socioDao = new SocioDAOImpl();
 
-    //MÉTODO PARA RUTAS GET /GrabarSociosServlet
+    private SocioDAO socioDAO = new SocioDAOImpl();
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String idParam = request.getParameter("socioId");
 
+        //Si el id no es nulo editamos la pag.
+        if (idParam != null) {
+            try {
+                int id = Integer.parseInt(idParam);
+                Optional<Socio> socio = socioDAO.find(id);
 
-        //VAlidacion para ver si es un numero
-        String codigoStr=request.getParameter("codigo");
-        Integer codigo=null;
-        boolean valida=true;
-        try{
-            codigo=Integer.parseInt(codigoStr);
-        }catch(NumberFormatException e){
-            e.printStackTrace();
+                if (socio.isPresent()) {
+                    request.setAttribute("codigo", socio.get());
+                } else {
+                    request.setAttribute("error", "No se encontró el socio con ese ID.");
+                }
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "El ID no es válido. Asegúrese de que el ID es un número.");
+            }
+        } else {
+            //En caso contrario muestra un error
+            request.setAttribute("error", "El parámetro 'id' es obligatorio.");
         }
-        RequestDispatcher dispatcher=null;
-        if(valida){
-            var socio=socioDao.find(codigo);
-            if(socio.isPresent()){
-                request.setAttribute("socio",socio);
-                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/formularioSocioB.jsp");
-                dispatcher.forward(request, response);
-            }
-            }else{
-                //LO mandamod a listar socios o sino que develva 1
-                response.sendRedirect("ListarSociosServlet?err-cod=!1");
-            }
 
+        //LO que no se es por qué al editarlo, me crea un nuevo socio en vez de modificarme el que tenia... Curioso!
+        request.getRequestDispatcher("/WEB-INF/jsp/formularioSocioB.jsp").forward(request, response);
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        RequestDispatcher dispatcher=null;
-        String codigoStr = request.getParameter("codigo");
-
-        //Validamos el parametro
-        Integer codigo = null;
-        //Try y catch para las excepciones
-        try {
-            //Nos aseguramos de que sea un entero el codigo
-            codigo = Integer.parseInt(codigoStr);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-        }
-
-        if(codigo!=null) {
-            List<Socio> listado = this.socioDao.getAll();
-            
-            request.setAttribute("listado", listado);
-
-            dispatcher = request.getRequestDispatcher("/WEB-INF/jsp_servlet_editar.jsp");
-            dispatcher.forward(request, response);
-        }else {
-            //Mostramos el error
-            System.out.println("Parámetro no válido");
-        }
-    }
 }

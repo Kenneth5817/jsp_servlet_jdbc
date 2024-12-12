@@ -9,41 +9,41 @@ import org.iesvdm.jsp_servlet_jdbc.dao.SocioDAOImpl;
 import org.iesvdm.jsp_servlet_jdbc.model.Socio;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-
 @WebServlet(name="BorrarSociosServlet", value="/BorrarSociosServlet")
 public class BorrarSociosServlet extends HttpServlet {
-    private SocioDAOImpl socioDAO=new SocioDAOImpl();
+    private SocioDAOImpl socioDAO = new SocioDAOImpl();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RequestDispatcher dispatcher = null;
-        //Encontramos en listadoSociosB
         String codigoStr = request.getParameter("codigo");
-
-        //Validamos el parametro
         Integer codigo = null;
-        //Try y catch para las excepciones
+
         try {
-            //Nos aseguramos de que sea un entero el codigo
-            codigo = Integer.parseInt(codigoStr);
+            codigo = Integer.parseInt(codigoStr); // Convertir el código a Integer
+            if (codigo != null) {
+                // Borrar socio
+                socioDAO.delete(codigo); // Llamar al DAO para borrar el socio
+            }
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
 
-        if (codigo != null) {
-            //SI QUISIERA REDIRECCION DEL LADO DEL NAVEGADOR
-            //response.sendRedirect("ListarSociosServlet");
+        // Obtener todos los socios después de borrar
+        List<Socio> listado = this.socioDAO.getAll();
 
-            List<Socio> listado = this.socioDAO.getAll();
-            request.setAttribute("listado", listado);
-
-            //pero quiero redireccion interna
-            dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/listadoSociosB.jsp");
-            dispatcher.forward(request, response);
-        } else {
-            System.out.println("Parámetro no válido");
+        // Asegurarse de que la lista no sea null
+        if (listado == null) {
+            listado = new ArrayList<>(); // Si la lista es null, inicialízala como una lista vacía
         }
-    }
 
+        // Establecer el atributo de solicitud para la JSP
+        request.setAttribute("listado", listado);
+
+        // Redirigir a la página de listado de socios
+        dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/listadoSociosB.jsp");
+        dispatcher.forward(request, response);
+    }
 }

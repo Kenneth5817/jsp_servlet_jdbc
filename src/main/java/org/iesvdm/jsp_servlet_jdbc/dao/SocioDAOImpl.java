@@ -132,29 +132,39 @@ public class SocioDAOImpl extends AbstractDAOImpl implements SocioDAO {
         try {
             conn = connectDB();
 
-            //el id es autoincremental por eso solo se setean los demas parámetros
-            ps = conn.prepareStatement("UPDATE socio SET nombre = ?, estatura = ?, edad = ?, localidad = ?  WHERE socioID = ?");
+            //Comprobamos que los datos no estén nulos
+            if (socio == null) {
+                System.out.println("Socio es null, no se puede actualizar.");
+                return;
+            }
+
+            // El id es autoincremental, por lo que solo se actualizan los demás campos
+            ps = conn.prepareStatement("UPDATE socio SET nombre = ?, estatura = ?, edad = ?, localidad = ? WHERE socioID = ?");
+
             int idx = 1;
             ps.setString(idx++, socio.getNombre());
-            ps.setInt(idx++, socio.getEstatura());
+            ps.setDouble(idx++, socio.getEstatura()); // Asegúrate de usar setDouble si estatura es decimal
             ps.setInt(idx++, socio.getEdad());
             ps.setString(idx++, socio.getLocalidad());
-
             ps.setInt(idx++, socio.getSocioId());
 
+            // Ejecuta la actualización
             int rows = ps.executeUpdate();
 
-
-            if (rows == 0)
-                System.out.println("Update de socio con 0 registros actualizados.");
+            // Verifica si se actualizó algún registro
+            if (rows > 0) {
+                System.out.println("Socio actualizado correctamente.");
+            } else {
+                System.out.println("No se encontró el socio o no se actualizó.");
+            }
 
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             closeDb(conn, ps, rs);
         }
-
     }
+
 
     @Override
     public void delete(int id) {
@@ -214,7 +224,6 @@ public class SocioDAOImpl extends AbstractDAOImpl implements SocioDAO {
                     e.printStackTrace();
                 }
             }
-
             return exito;
         }
 }

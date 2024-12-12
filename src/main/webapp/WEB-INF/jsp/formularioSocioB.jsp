@@ -53,11 +53,11 @@
   %>
   <div class="row mt-2">
     <div class="col-6">
-        <div class="alert alert-danger alert-dismissible fade show">
-          <strong>Error!</strong> <%=error%>
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+      <div class="alert alert-danger alert-dismissible fade show">
+        <strong>Error!</strong> <%=error%>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
+    </div>
   </div>
   <%
     }
